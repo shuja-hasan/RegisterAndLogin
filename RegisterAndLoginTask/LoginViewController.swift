@@ -10,6 +10,11 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
+    @IBOutlet var emailAddressTextField : UITextField!
+    @IBOutlet var passwordTextField : UITextField!
+    @IBOutlet var loginProgressUserLabel : UILabel!
+    @IBOutlet var loginButton : UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -17,57 +22,63 @@ class LoginViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+    }
+    
+    func resetUI() {
+        loginButton.isHidden = false
+        emailAddressTextField.isHidden = false
+        passwordTextField.isHidden = false
+        loginProgressUserLabel.isHidden = true
+        
+        if(emailAddressTextField.isFirstResponder) {
+            emailAddressTextField.resignFirstResponder()
+        }
+        if(passwordTextField.isFirstResponder) {
+            passwordTextField.resignFirstResponder()
+        }
+    }
+    
+    func updateUIToShowProgress() {
+        loginButton.isHidden = true
+        emailAddressTextField.isHidden = true
+        passwordTextField.isHidden = true
+        loginProgressUserLabel.isHidden = false
+        
+        if(emailAddressTextField.isFirstResponder) {
+            emailAddressTextField.resignFirstResponder()
+        }
+        if(passwordTextField.isFirstResponder) {
+            passwordTextField.resignFirstResponder()
+        }
+    }
+    
+    @IBAction func loginButtonPressed() {
         performAuthWithTestCredentials()
     }
     
     func performAuthWithTestCredentials() {
         
-        let email:NSString = "test"
-        let password:NSString = "test"
+        let email: String = emailAddressTextField.text!
+        let password: String = passwordTextField.text!
         let prefs:UserDefaults = UserDefaults.standard
         
-        if ( email.isEqual(to: "") || password.isEqual(to: "") ) {
-            
-            let alertView:UIAlertView = UIAlertView()
-            alertView.title = "Login Failed!"
-            alertView.message = "Please enter Email and Password"
-            alertView.delegate = self
-            alertView.addButton(withTitle: "OK")
-            alertView.show()
+        if ( email.isEqual("") || password.isEqual("") ) {
+            self.resetUI()
+            self.showAlert("Login Failed!", "Please enter Email and Password")
+        }
+        else if(!GenericUtility.sharedInstance.isValidEmail(emailAddress: email as String)) {
+            self.resetUI()
+            self.showAlert("Registration Failed!", "Please enter correct Email Address")
         }
         else {
+            let params = ["email":"test" as String, "password":"test" as String] as Dictionary<String, String>
             
-            let post:NSString = "email=\(email)&password=\(password)" as NSString
-            let url:URL = URL(string: "https://aqueous-river-46656.herokuapp.com/api/v1/auth")!
-            let postData:Data = post.data(using: String.Encoding.ascii.rawValue)!
-            let postLength:NSString = String( postData.count ) as NSString
-            let request:NSMutableURLRequest = NSMutableURLRequest(url: url)
-            request.httpMethod = "POST"
-            request.httpBody = postData
-            request.setValue(postLength as String, forHTTPHeaderField: "Content-Length")
-            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            self.updateUIToShowProgress()
             
-            var reponseError: NSError?
-            var response: URLResponse?
-            
-            var urlData: Data?
-            do {
-                urlData = try NSURLConnection.sendSynchronousRequest(request as URLRequest, returning:&response)
-            } catch let error as NSError {
-                reponseError = error
-                urlData = nil
-            }
-            
-            if ( urlData != nil ) {
-                let res = response as! HTTPURLResponse!;
+            RestApiManager.sharedInstance.initializeNetworkRequest(params, "auth") { json in
                 
-                if ((res?.statusCode)! >= 200 && (res?.statusCode)! < 300)
-                {
-                    let responseData:NSString  = NSString(data:urlData!, encoding:String.Encoding.utf8.rawValue)!
-                    NSLog("Response ==> %@", responseData);
-                    let jsonData:NSDictionary = (try! JSONSerialization.jsonObject(with: urlData!, options:JSONSerialization.ReadingOptions.mutableContainers )) as! NSDictionary
-                    let accessToken:NSString = jsonData.value(forKey: "accessToken") as! NSString
+                if(json.count > 0) {
+                    let accessToken:NSString = json.value(forKey: "accessToken") as! NSString
                     
                     if(accessToken.length > 0)
                     {
@@ -75,46 +86,35 @@ class LoginViewController: UIViewController {
                         prefs.set(accessToken, forKey: "accessToken")
                         
                         self.moveToWelcomeScreenOnSuccessfullLogin()
-                        
-                    } else {
-                        var error_msg:NSString
-                        
-                        if jsonData["error_message"] as? NSString != nil {
-                            error_msg = jsonData["error_message"] as! NSString
-                        } else {
-                            error_msg = "Unknown Error"
-                        }
-                        let alertView:UIAlertView = UIAlertView()
-                        alertView.title = "Login Failed!"
-                        alertView.message = error_msg as String
-                        alertView.delegate = self
-                        alertView.addButton(withTitle: "OK")
-                        alertView.show()
                     }
-                } else {
-                    let alertView:UIAlertView = UIAlertView()
-                    alertView.title = "Login Failed!"
-                    alertView.message = "Connection Failed"
-                    alertView.delegate = self
-                    alertView.addButton(withTitle: "OK")
-                    alertView.show()
+                    else {
+                        self.showAlert("Login Failed!", "")
+                    }
                 }
-            }  else {
-                let alertView:UIAlertView = UIAlertView()
-                alertView.title = "Login Failed!"
-                alertView.message = "Connection Failure"
-                if let error = reponseError {
-                    alertView.message = (error.localizedDescription)
+                else {
+                    self.showAlert("Login Failed!", "Invalid Credentials")
                 }
-                alertView.delegate = self
-                alertView.addButton(withTitle: "OK")
-                alertView.show()
             }
         }
     }
     
+    func showAlert(_ title: NSString, _ message: NSString) {
+        let alertController = UIAlertController(title: title as String, message: message as String, preferredStyle: .alert)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(defaultAction)
+        
+        // Make sure view is presented on main thread
+        DispatchQueue.main.async {
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
     func moveToWelcomeScreenOnSuccessfullLogin() {
-        self.performSegue(withIdentifier: "moveToWelcomeScreen", sender: self)
+        // Make sure segue is performed on main thread
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "moveToWelcomeScreen", sender: self)
+        }
     }
     
     override func didReceiveMemoryWarning() {

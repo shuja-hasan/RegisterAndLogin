@@ -17,6 +17,8 @@
 		194EA68C1DBFA2D400C28013 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194EA68B1DBFA2D400C28013 /* LoginViewController.swift */; };
 		194EA68E1DBFA2E400C28013 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194EA68D1DBFA2E400C28013 /* RegisterViewController.swift */; };
 		194EA6951DBFA33900C28013 /* WelcomeScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194EA6941DBFA33900C28013 /* WelcomeScreenViewController.swift */; };
+		19A283621DC1D2FD003B7730 /* RestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A283611DC1D2FD003B7730 /* RestApiManager.swift */; };
+		19A283641DC1E698003B7730 /* GenericUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A283631DC1E697003B7730 /* GenericUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		194EA68B1DBFA2D400C28013 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		194EA68D1DBFA2E400C28013 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		194EA6941DBFA33900C28013 /* WelcomeScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeScreenViewController.swift; sourceTree = "<group>"; };
+		19A283611DC1D2FD003B7730 /* RestApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestApiManager.swift; sourceTree = "<group>"; };
+		19A283631DC1E697003B7730 /* GenericUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +166,8 @@
 		194EA6921DBFA31600C28013 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				19A283611DC1D2FD003B7730 /* RestApiManager.swift */,
+				19A283631DC1E697003B7730 /* GenericUtility.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -308,8 +314,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19A283641DC1E698003B7730 /* GenericUtility.swift in Sources */,
 				194EA68C1DBFA2D400C28013 /* LoginViewController.swift in Sources */,
 				194EA6601DBF9E7B00C28013 /* ViewController.swift in Sources */,
+				19A283621DC1D2FD003B7730 /* RestApiManager.swift in Sources */,
 				194EA65E1DBF9E7B00C28013 /* AppDelegate.swift in Sources */,
 				194EA6951DBFA33900C28013 /* WelcomeScreenViewController.swift in Sources */,
 				194EA68E1DBFA2E400C28013 /* RegisterViewController.swift in Sources */,
@@ -555,6 +563,7 @@
 				194EA6841DBF9E7B00C28013 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		194EA6851DBF9E7B00C28013 /* Build configuration list for PBXNativeTarget "RegisterAndLoginTaskTests" */ = {
 			isa = XCConfigurationList;
@@ -563,6 +572,7 @@
 				194EA6871DBF9E7B00C28013 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		194EA6881DBF9E7B00C28013 /* Build configuration list for PBXNativeTarget "RegisterAndLoginTaskUITests" */ = {
 			isa = XCConfigurationList;
@@ -571,6 +581,7 @@
 				194EA68A1DBF9E7B00C28013 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
